@@ -1,0 +1,31 @@
+﻿<Window x:Class="_2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:_2"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Label Margin="26,29,728,353" Name="Label_A">
+            a
+        </Label>
+        <TextBox Margin="47,28,443,358" Name="A">
+        </TextBox>
+        <Label Margin="26,74,728,308" Name="Label_B">
+            b
+        </Label>
+        <TextBox Margin="47,71,443,315" Name="B">
+        </TextBox>
+        <Button x:Name="BrowseButton" Content="Browse a file" HorizontalAlignment="Left"   
+                Margin="485,13,0,0" VerticalAlignment="Top" Width="121" Click="BrowseButton_Click"   
+                RenderTransformOrigin="1.047,0.821" Height="40"/>
+        <TextBlock Margin="485,56,0,338" Name="Filename">
+        </TextBlock>
+        <Button x:Name="Code" Content="Code!" HorizontalAlignment="Left"   
+                Margin="346,194,0,0" VerticalAlignment="Top" Width="121" Click="CodeButton_Click"   
+                RenderTransformOrigin="1.047,0.821" Height="40"/>
+        <TextBlock Margin="253,246,232,148" Name="isValid">
+        </TextBlock>
+    </Grid>
+</Window>
