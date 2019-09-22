@@ -59,10 +59,12 @@ namespace _2
                     var codedText = code.Encrypt(text);
                     file.WriteLine(codedText);
                 }
+                EncryptInfo.Text = "file succesfully encrypted!";
+
             }
             else
             {
-                isValid.Text = "a and b are not valid";
+                EncryptInfo.Text = "a and b are not valid";
             }
 
         }

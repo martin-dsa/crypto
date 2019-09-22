@@ -25,7 +25,7 @@
         <Button x:Name="Code" Content="Code!" HorizontalAlignment="Left"   
                 Margin="346,194,0,0" VerticalAlignment="Top" Width="121" Click="CodeButton_Click"   
                 RenderTransformOrigin="1.047,0.821" Height="40"/>
-        <TextBlock Margin="253,246,232,148" Name="isValid">
+        <TextBlock Margin="253,246,232,148" Name="EncryptInfo">
         </TextBlock>
     </Grid>
 </Window>
