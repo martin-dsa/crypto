@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace _2
 {
-    class Code
+    class AffineCipher
     {
         private static readonly List<char> UA_Alphabet = new List<char>
         {
@@ -18,7 +18,7 @@ namespace _2
         public int A { get; set; }
         public int B { get; set; }
 
-        public Code(int a, int b)
+        public AffineCipher(int a, int b)
         {
             A = a;
             B = b;
@@ -37,6 +37,24 @@ namespace _2
                 if (Table.Keys.Contains(text[i]))
                 {
                     res += Table[text[i]];
+                }
+                else
+                {
+                    res += text[i];
+                }
+            }
+            return res;
+        }
+
+        public string Decrypt(string text)
+        {
+            var invertedDict = Table.ToDictionary(kp => kp.Value, kp => kp.Key);
+            string res = "";
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (Table.Keys.Contains(text[i]))
+                {
+                    res += invertedDict[text[i]];
                 }
                 else
                 {

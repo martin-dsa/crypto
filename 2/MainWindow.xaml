@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:_2"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" Background="Beige">
     <Grid>
         <Label Margin="26,29,728,353" Name="Label_A">
             a
@@ -22,10 +22,15 @@
                 RenderTransformOrigin="1.047,0.821" Height="40"/>
         <TextBlock Margin="485,56,0,338" Name="Filename">
         </TextBlock>
-        <Button x:Name="Code" Content="Code!" HorizontalAlignment="Left"   
-                Margin="346,194,0,0" VerticalAlignment="Top" Width="121" Click="CodeButton_Click"   
+        <Button x:Name="Encode" Content="Encode" HorizontalAlignment="Left"   
+                Margin="129,189,0,0" VerticalAlignment="Top" Width="121" Click="EncodeButton_Click"   
                 RenderTransformOrigin="1.047,0.821" Height="40"/>
-        <TextBlock Margin="253,246,232,148" Name="EncryptInfo">
+        <TextBlock Margin="33,244,452,150" Name="EncryptInfo">
+        </TextBlock>
+        <Button x:Name="Code" Content="Decode" HorizontalAlignment="Left"   
+                Margin="502,187,0,0" VerticalAlignment="Top" Width="121" Click="DecodeButton_Click"   
+                RenderTransformOrigin="1.047,0.821" Height="40"/>
+        <TextBlock Margin="413,241,72,153" Name="DecryptInfo">
         </TextBlock>
     </Grid>
 </Window>

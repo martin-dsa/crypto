@@ -45,17 +45,17 @@ namespace _2
                 directory = System.IO.Path.GetDirectoryName(openFileDlg.FileName);
 
 
-                text = File.ReadAllText(openFileDlg.FileName, Encoding.Default);
+                text = File.ReadAllText(openFileDlg.FileName, Encoding.UTF8);
             }
         }
 
-        private void CodeButton_Click(object sender, RoutedEventArgs e)
+        private void EncodeButton_Click(object sender, RoutedEventArgs e)
         {
             if (int.TryParse(A.Text, out int a) && int.TryParse(B.Text, out int b))
             {
-                using (var file = new StreamWriter($"{directory}/coded.txt"))
+                using (var file = new StreamWriter($"{directory}/encoded.txt"))
                 {
-                    var code = new Code(a, b);
+                    var code = new AffineCipher(a, b);
                     var codedText = code.Encrypt(text);
                     file.WriteLine(codedText);
                 }
@@ -65,6 +65,26 @@ namespace _2
             else
             {
                 EncryptInfo.Text = "a and b are not valid";
+            }
+
+        }
+
+        private void DecodeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (int.TryParse(A.Text, out int a) && int.TryParse(B.Text, out int b))
+            {
+                using (var file = new StreamWriter($"{directory}/decoded.txt"))
+                {
+                    var code = new AffineCipher(a, b);
+                    var codedText = code.Decrypt(text);
+                    file.WriteLine(codedText);
+                }
+                DecryptInfo.Text = "file succesfully decrypted!";
+
+            }
+            else
+            {
+                DecryptInfo.Text = "a and b are not valid";
             }
 
         }
