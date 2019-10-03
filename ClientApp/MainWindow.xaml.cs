@@ -12,77 +12,78 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
-        public List<string> Items { get; set; } = new List<string> {
-            "Шифр Цезаря",
-            "Афінний шифр Цезаря",
-        };
-        private IEncoder encoder;
-
         private string text;
-        private string directory;
 
         public MainWindow()
         {
             InitializeComponent();
-            List.ItemsSource = Items;
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDlg = new OpenFileDialog();
+            var openFileDlg = new OpenFileDialog();
             bool? result = openFileDlg.ShowDialog();
 
             if (result == true)
             {
                 Filename.Text = openFileDlg.FileName;
-                directory = Path.GetDirectoryName(openFileDlg.FileName);
-                text = File.ReadAllText(openFileDlg.FileName, Encoding.Default);
+                using var reader = new StreamReader(openFileDlg.FileName, Encoding.UTF8);
+                text = reader.ReadToEnd();
             }
         }
 
         private void EncodeButton_Click(object sender, RoutedEventArgs e)
         {
-            if (int.TryParse(A.Text, out int a) && int.TryParse(B.Text, out int b))
+            try
             {
-                using (var file = new StreamWriter($"{directory}/encoded.txt", false, Encoding.Default))
+                IEncoder encoder = SetEncoder();
+                if (SaveTextToFile(encoder.Encrypt(text)) == true)
                 {
-                    encoder = List.SelectedItem.ToString() switch
-                    {
-                        "Шифр Цезаря" => new CaesarCipher(a),
-                        "Aфінний Шифр Цезаря" => new AffineCipher(a, b),
-                    };
-                    var codedText = encoder.Encrypt(text);
-                    file.WriteLine(codedText);
+                    EncryptInfo.Text = "File succesfully encrypted!";
                 }
-                EncryptInfo.Text = "file succesfully encrypted!";
             }
-            else
+            catch (System.Exception)
             {
-                EncryptInfo.Text = "a and b are not valid";
+                EncryptInfo.Text = "Something went wrong!!!";
             }
         }
 
         private void DecodeButton_Click(object sender, RoutedEventArgs e)
         {
-            if (int.TryParse(A.Text, out int a) && int.TryParse(B.Text, out int b))
+            try
             {
-                using (var file = new StreamWriter($"{directory}/decoded.txt", false, Encoding.Default))
+                IEncoder encoder = SetEncoder();
+                if (SaveTextToFile(encoder.Decrypt(text)) == true)
                 {
-                    IEncoder code = new AffineCipher(a, b);
-                    var codedText = code.Decrypt(text);
-                    file.WriteLine(codedText);
+                    DecryptInfo.Text = "File succesfully decrypted!";
                 }
-                DecryptInfo.Text = "file succesfully decrypted!";
             }
-            else
+            catch (System.Exception)
             {
-                DecryptInfo.Text = "a and b are not valid";
+                DecryptInfo.Text = "Something went wrong!!!";
             }
-        }
 
-        private void List_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        }
+        private bool SaveTextToFile(string text)
         {
-
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Text files(*.txt)|*.txt"
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                using var file = new StreamWriter(saveFileDialog.FileName, false, Encoding.Default); ;
+                file.WriteLine(text);
+                return true;
+            }
+            return false;
         }
+        private IEncoder SetEncoder() => CipherList.SelectedIndex switch
+        {
+            0 => new CaesarCipher(int.Parse(a1.Text)),
+            1 => new AffineCipher(int.Parse(a2.Text), int.Parse(b2.Text)),
+            _ => null
+        };
+
     }
 }
