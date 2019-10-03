@@ -1,51 +1,42 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using Encode;
+using Microsoft.Win32;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.IO;
+using System.Text;
+using System.Windows;
 
-namespace _2
+namespace WpfApp1
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        public List<string> Items { get; set; } = new List<string> {
+            "Шифр Цезаря",
+            "Афінний шифр Цезаря",
+        };
+        private IEncoder encoder;
+
         private string text;
         private string directory;
+
         public MainWindow()
         {
             InitializeComponent();
+            List.ItemsSource = Items;
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            // Create OpenFileDialog
-            Microsoft.Win32.OpenFileDialog openFileDlg = new Microsoft.Win32.OpenFileDialog();
-
-            // Launch OpenFileDialog by calling ShowDialog method
-            Nullable<bool> result = openFileDlg.ShowDialog();
-            // Get the selected file name and display in a TextBox.
-            // Load content of file in a TextBlock
+            OpenFileDialog openFileDlg = new OpenFileDialog();
+            bool? result = openFileDlg.ShowDialog();
 
             if (result == true)
             {
                 Filename.Text = openFileDlg.FileName;
-                directory = System.IO.Path.GetDirectoryName(openFileDlg.FileName);
-
-
-                text = File.ReadAllText(openFileDlg.FileName, Encoding.UTF8);
+                directory = Path.GetDirectoryName(openFileDlg.FileName);
+                text = File.ReadAllText(openFileDlg.FileName, Encoding.Default);
             }
         }
 
@@ -53,39 +44,44 @@ namespace _2
         {
             if (int.TryParse(A.Text, out int a) && int.TryParse(B.Text, out int b))
             {
-                using (var file = new StreamWriter($"{directory}/encoded.txt"))
+                using (var file = new StreamWriter($"{directory}/encoded.txt", false, Encoding.Default))
                 {
-                    var code = new AffineCipher(a, b);
-                    var codedText = code.Encrypt(text);
+                    encoder = List.SelectedItem.ToString() switch
+                    {
+                        "Шифр Цезаря" => new CaesarCipher(a),
+                        "Aфінний Шифр Цезаря" => new AffineCipher(a, b),
+                    };
+                    var codedText = encoder.Encrypt(text);
                     file.WriteLine(codedText);
                 }
                 EncryptInfo.Text = "file succesfully encrypted!";
-
             }
             else
             {
                 EncryptInfo.Text = "a and b are not valid";
             }
-
         }
 
         private void DecodeButton_Click(object sender, RoutedEventArgs e)
         {
             if (int.TryParse(A.Text, out int a) && int.TryParse(B.Text, out int b))
             {
-                using (var file = new StreamWriter($"{directory}/decoded.txt"))
+                using (var file = new StreamWriter($"{directory}/decoded.txt", false, Encoding.Default))
                 {
-                    var code = new AffineCipher(a, b);
+                    IEncoder code = new AffineCipher(a, b);
                     var codedText = code.Decrypt(text);
                     file.WriteLine(codedText);
                 }
                 DecryptInfo.Text = "file succesfully decrypted!";
-
             }
             else
             {
                 DecryptInfo.Text = "a and b are not valid";
             }
+        }
+
+        private void List_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
 
         }
     }
