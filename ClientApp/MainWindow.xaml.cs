@@ -1,18 +1,18 @@
 ﻿using Encode;
 using Microsoft.Win32;
-using System.Collections.Generic;
+using System;
 using System.IO;
 using System.Text;
 using System.Windows;
 
-namespace WpfApp1
+namespace ClientApp
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
-        private string text;
+        private string _text;
 
         public MainWindow()
         {
@@ -22,27 +22,25 @@ namespace WpfApp1
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             var openFileDlg = new OpenFileDialog();
-            bool? result = openFileDlg.ShowDialog();
+            var result = openFileDlg.ShowDialog();
 
-            if (result == true)
-            {
-                Filename.Text = openFileDlg.FileName;
-                using var reader = new StreamReader(openFileDlg.FileName, Encoding.UTF8);
-                text = reader.ReadToEnd();
-            }
+            if (result != true) return;
+            Filename.Text = openFileDlg.FileName;
+            using var reader = new StreamReader(openFileDlg.FileName, Encoding.UTF8);
+            _text = reader.ReadToEnd();
         }
 
         private void EncodeButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                IEncoder encoder = SetEncoder();
-                if (SaveTextToFile(encoder.Encrypt(text)) == true)
+                var encoder = SetEncoder();
+                if (SaveTextToFile(encoder.Encrypt(_text)))
                 {
-                    EncryptInfo.Text = "File succesfully encrypted!";
+                    EncryptInfo.Text = "File successfully encrypted!";
                 }
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 EncryptInfo.Text = "Something went wrong!!!";
             }
@@ -52,38 +50,41 @@ namespace WpfApp1
         {
             try
             {
-                IEncoder encoder = SetEncoder();
-                if (SaveTextToFile(encoder.Decrypt(text)) == true)
+                var encoder = SetEncoder();
+                if (SaveTextToFile(encoder.Decrypt(_text)))
                 {
-                    DecryptInfo.Text = "File succesfully decrypted!";
+                    DecryptInfo.Text = "File successfully decrypted!";
                 }
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 DecryptInfo.Text = "Something went wrong!!!";
             }
-
         }
-        private bool SaveTextToFile(string text)
+
+        private static bool SaveTextToFile(string text)
         {
             var saveFileDialog = new SaveFileDialog
             {
                 Filter = "Text files(*.txt)|*.txt"
             };
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                using var file = new StreamWriter(saveFileDialog.FileName, false, Encoding.Default); ;
-                file.WriteLine(text);
-                return true;
-            }
-            return false;
+            if (saveFileDialog.ShowDialog() != true) return false;
+            using var file = new StreamWriter(saveFileDialog.FileName, false, Encoding.Default);
+            file.Write(text);
+            return true;
         }
+
         private IEncoder SetEncoder() => CipherList.SelectedIndex switch
         {
             0 => new CaesarCipher(int.Parse(a1.Text)),
             1 => new AffineCipher(int.Parse(a2.Text), int.Parse(b2.Text)),
-            _ => null
+            2 => new XorCipher
+            {
+                Y1 = int.Parse(a3.Text),
+                Y2 = int.Parse(b3.Text),
+                Y3 = int.Parse(c3.Text),
+            },
+            _ => null,
         };
-
     }
 }

@@ -6,17 +6,17 @@ namespace Encode
 {
     public class CaesarCipher : IEncoder
     {
-        protected List<char> Alphabet;
-        protected Dictionary<char, char> Table { get; } = new Dictionary<char, char>();
+        protected readonly List<char> Alphabet;
+        private Dictionary<char, char> Table { get; } = new Dictionary<char, char>();
         public int AKey { get; set; }
 
         public CaesarCipher(int a)
         {
-            Alphabet = Utility.UAAlphabet;
+            Alphabet = Utility.UaAlphabet;
             AKey = a;
-            for (int i = 0; i < Alphabet.Count; i++)
+            for (var i = 0; i < Alphabet.Count; i++)
             {
-                int index = Index(i);
+                var index = Index(i);
                 Table.Add(Alphabet[i], Alphabet[index]);
             }
         }
@@ -27,12 +27,12 @@ namespace Encode
 
         public string Decrypt(string text) => Crypt(text, Table.ToDictionary(kp => kp.Value, kp => kp.Key));
 
-        private string Crypt(string text, Dictionary<char, char> dict)
+        private static string Crypt(string text, Dictionary<char, char> dict)
         {
-            StringBuilder res = new StringBuilder();
-            for (int i = 0; i < text.Length; i++)
+            var res = new StringBuilder();
+            foreach (var t in text)
             {
-                res.Append(dict.Keys.Contains(text[i]) ? dict[text[i]] : text[i]);
+                res.Append(dict.Keys.Contains(t) ? dict[t] : t);
             }
             return res.ToString();
         }
